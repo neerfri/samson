@@ -5,6 +5,7 @@ class MultiLock
 
   class << self
     include ::NewRelic::Agent::MethodTracer
+    include ::Samson::APM
 
     def lock(id, holder, options)
       locked = wait_for_lock(id, holder, options)
@@ -26,6 +27,9 @@ class MultiLock
       false
     end
     add_method_tracer :wait_for_lock
+
+    # Datadog APM method tracer
+    trace_methods :wait_for_lock
 
     def try_lock(id, holder)
       mutex.synchronize do

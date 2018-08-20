@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 class DeployService
   include ::NewRelic::Agent::MethodTracer
+  include ::Samson::APM
   attr_reader :user
 
   def initialize(user)
@@ -109,6 +110,9 @@ class DeployService
     execute_and_log_errors(deploy) { notify_outbound_webhooks(deploy) }
   end
   add_method_tracer :send_after_notifications
+
+  # Datadog APM method tracer
+  trace_methods :send_before_notifications, :send_after_notifications
 
   # basically does the same as the hooks would do
   def execute_and_log_errors(deploy, &block)

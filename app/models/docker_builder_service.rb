@@ -3,6 +3,7 @@ require 'docker'
 
 class DockerBuilderService
   include ::NewRelic::Agent::MethodTracer
+  include ::Samson::APM
 
   def initialize(build)
     @build = build
@@ -84,4 +85,6 @@ class DockerBuilderService
     )
   end
   add_method_tracer :build_image
+  # Datadog APM method tracer
+  trace_methods :before_docker_build, :build_image
 end

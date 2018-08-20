@@ -3,6 +3,7 @@
 # Caches a local mirror (not a full checkout) and creates a workspace when deploying
 class GitRepository
   include ::NewRelic::Agent::MethodTracer
+  include ::Samson::APM
 
   attr_accessor :executor # others set this to listen in on commands being executed
 
@@ -138,6 +139,9 @@ class GitRepository
     executor.execute("cd #{repo_cache_dir}", 'git fetch -p')
   end
   add_method_tracer :update!
+
+  # Datadog APM method tracer
+  trace_methods :clean!, :clone!, :create_workspace, :update!
 
   def sha_exist?(sha)
     !!capture_stdout("git", "cat-file", "-t", sha)

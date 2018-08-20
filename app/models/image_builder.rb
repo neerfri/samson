@@ -7,6 +7,7 @@ class ImageBuilder
     DIGEST_SHA_REGEX = /Digest:.*(sha256:[0-9a-f]{64})/i
 
     include ::NewRelic::Agent::MethodTracer
+    include ::Samson::APM
 
     def build_image(dir, build, executor, tag_as_latest:, **args)
       if DockerRegistry.all.empty?
@@ -87,6 +88,9 @@ class ImageBuilder
       nil
     end
     add_method_tracer :push_image
+
+    # Datadog APM method tracer
+    trace_methods :push_image
 
     def push_image_to_registries(image_id, build, executor, tag:, override_tag:)
       digest = nil
