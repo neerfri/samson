@@ -6,6 +6,10 @@ SingleCov.covered!
 
 describe Samson::SyslogFormatter do
   describe '.json' do
+    before do
+      Time.stubs(now: Time.at(0))
+    end
+
     it 'returns a json formatted log' do
       output = StringIO.new
       logger = Logger.new(output)
