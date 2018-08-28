@@ -57,7 +57,8 @@ module Samson
       :ref_status,
       :release_deploy_conditions,
       :stage_clone,
-      :stage_permitted_params
+      :stage_permitted_params,
+      :performance_tracer
     ].freeze
 
     KNOWN = VIEW_HOOKS + EVENT_HOOKS

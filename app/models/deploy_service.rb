@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 class DeployService
-  include ::NewRelic::Agent::MethodTracer
-  include ::Samson::APM
+  include ::Samson::PerformanceTracer
   attr_reader :user
 
   def initialize(user)
@@ -100,7 +99,6 @@ class DeployService
       DeployMailer.bypass_email(deploy, user).deliver_now
     end
   end
-  add_method_tracer :send_before_notifications
 
   def send_after_notifications(deploy)
     Samson::Hooks.fire(:after_deploy, deploy, deploy.buddy)
@@ -109,10 +107,7 @@ class DeployService
     execute_and_log_errors(deploy) { send_failed_deploy_email(deploy) }
     execute_and_log_errors(deploy) { notify_outbound_webhooks(deploy) }
   end
-  add_method_tracer :send_after_notifications
-
-  # Datadog APM method tracer
-  trace_methods :send_before_notifications, :send_after_notifications
+  add_method_tracers :send_after_notifications, :send_before_notifications
 
   # basically does the same as the hooks would do
   def execute_and_log_errors(deploy, &block)
