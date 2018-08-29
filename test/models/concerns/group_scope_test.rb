@@ -87,4 +87,10 @@ describe GroupScope do
       refute EnvironmentVariable.new(scope: deploy_groups(:pod1)).matches_scope?(deploy_group)
     end
   end
+
+  describe "#as_json" do
+    it "includes scope" do
+      environment_variable.as_json.keys.must_include "scope"
+    end
+  end
 end
