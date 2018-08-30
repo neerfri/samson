@@ -80,10 +80,9 @@ describe JobsController do
         flash[:notice].must_equal 'Cancelled!'
       end
 
-      it "is unauthorized when not allowed" do
-        job.update_column(:user_id, users(:admin).id)
+      it "shows an error when not allowed" do
+        job.stubs(:can_be_cancelled_by?).returns(false)
         delete :destroy, params: {project_id: project.to_param, id: job}
-        assert_redirected_to [project, job]
         flash[:error].must_equal "You are not allowed to cancel this job."
       end
 
